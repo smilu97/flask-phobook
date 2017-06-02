@@ -11,6 +11,7 @@ user_know = Table('user_know', Base.metadata,
 
 class User(Base):
 	__tablename__ = 'user'
+	
 	id = Column(Integer, primary_key = True)
 	name = Column(String(32))
 	phoneNumber = Column(String(128), index=True)

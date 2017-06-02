@@ -17,7 +17,7 @@ DATABASE_PASSWORD = 'smilu9791!#$%'
 DATABASE_URL = 'localhost'
 DATABASE_SCHEME_NAME = 'phobook'
 
-DATABASE_CONNECT_URL = 'mysql+pymysql://{}:{}@{}/{}'.format(\
+DATABASE_CONNECT_URL = 'mysql+pymysql://{}:{}@{}/{}?charset=utf8'.format(\
 		DATABASE_USERNAME, DATABASE_PASSWORD, \
 		DATABASE_URL, DATABASE_SCHEME_NAME \
 	)

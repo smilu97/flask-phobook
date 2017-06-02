@@ -1,7 +1,8 @@
 #-*- coding: utf-8 -*-
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+import imp, sys
+imp.reload(sys)
+try: sys.setdefaultencoding('UTF8')
+except Exception as e: pass
 
 from flask import Flask
 import config
