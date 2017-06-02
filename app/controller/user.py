@@ -11,7 +11,7 @@ app = Blueprint('user', __name__)
 @app.route('/whoami', methods=['GET'])
 def controlWhoami():
 	try:
-		assertLogin()
+		if current_user.is_anonymous: raise Exception(u'로그인에 실패했습니다. 전화번호나 비밀번호가 맞는지 다시 확인해주세요')
 		return jsonify({ 'success': 1, 'user': current_user.serialize })
 	except Exception as e:
 		print e
@@ -26,6 +26,18 @@ def controlSignup():
 	except Exception as e:
 		print e
 		return jsonify({'success':0, 'error': str(e)})
+
+@app.route('/checkuser/<string:phoneNumber>', methods=['GET'])
+def controlGetCheckUser(phoneNumber):
+	try:
+		user = service.findByPhoneNumber(phoneNumber);
+		if user:
+			return jsonify({'success':1, 'exist': True})
+		else:
+			return jsonify({'success':1, 'exist': False})
+	except Exception as e:
+		print e
+		return jsonify({'success':0, 'error': u'조회에 실패했습니다'})
 
 @app.route('/contact', methods=['POST'])
 def controllPostContact():
@@ -45,6 +57,15 @@ def controlGetContacts(page):
 		assertLogin()
 		contacts = service.getContacts(current_user, page, **(request.args))
 		return jsonify({'success': 1, 'contacts': [i.serialize for i in contacts]})
+	except Exception as e:
+		print e
+		return jsonify({'success': 0, 'error': str(e)})
+
+@app.route('/contacts/all', methods=['GET'])
+def controlGetContactsAll():
+	try:
+		assertLogin()
+		return jsonify({'success': 1, 'contacts': [i.serialize for i in current_user.contacts]})
 	except Exception as e:
 		print e
 		return jsonify({'success': 0, 'error': str(e)})

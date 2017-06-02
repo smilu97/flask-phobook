@@ -12,6 +12,7 @@ user_know = Table('user_know', Base.metadata,
 class User(Base):
 	__tablename__ = 'user'
 	id = Column(Integer, primary_key = True)
+	name = Column(String(32))
 	phoneNumber = Column(String(128), index=True)
 	password = Column(String(256))
 	role = Column(String(32))
@@ -21,14 +22,15 @@ class User(Base):
 		secondaryjoin=(id == user_know.c.other_id),
 		backref="reverse_contacts"
 	)
-
-	def __init__(self, phoneNumber, password=None):
+	
+	def __init__(self, phoneNumber, name=None, password=None) :
+		self.name = name
 		self.phoneNumber = phoneNumber
 		self.password = password and hashPassword(password)
 		self.role = 'USER'
 
 	def __repr__(self):
-		return '<User {}, phoneNumber: {}>'.format(self.id, self.phoneNumber)
+		return '<User {}, name: {}, phoneNumber: {}>'.format(self.id, self.name, self.phoneNumber)
 
 	@property
 	def is_authenticated(self):
@@ -47,5 +49,6 @@ class User(Base):
 	def serialize(self):
 		return {
 			'id': self.id,
+			'name': self.name,
 			'phoneNumber': self.phoneNumber
 		}

@@ -13,6 +13,15 @@ def findByPhoneNumber(phoneNumber):
 
 def signup(data):
 	user = findByPhoneNumber(data['phoneNumber'])
+	phoneNumber = data['phoneNumber']
+	if len(phoneNumber) != 10 and len(phoneNumber) != 11:
+		raise Exception(u'전화번호는 10자리 혹은 11자리여야 합니다')
+	name = data['name']
+	if len(name) < 2:
+		raise Exception(u'이름이 너무 짧습니다')
+	password = data['password']
+	if len(password) < 2:
+		raise Exception(u'비밀번호가 너무 짧습니다')
 	if not user:
 		user = User(**data)
 		db_session.add(user)
