@@ -31,7 +31,7 @@ def controlSignup():
 def controlGetCheckUser(phoneNumber):
 	try:
 		user = service.findByPhoneNumber(phoneNumber);
-		if user:
+		if user and user.password:
 			return jsonify({'success':1, 'exist': True})
 		else:
 			return jsonify({'success':1, 'exist': False})
@@ -51,21 +51,23 @@ def controllPostContact():
 		print e
 		return jsonify({'success':0, 'error': str(e)})
 
-@app.route('/contacts/<int:page>', methods=['GET'])
-def controlGetContacts(page):
-	try:
-		assertLogin()
-		contacts = service.getContacts(current_user, page, **(request.args))
-		return jsonify({'success': 1, 'contacts': [i.serialize for i in contacts]})
-	except Exception as e:
-		print e
-		return jsonify({'success': 0, 'error': str(e)})
+# @app.route('/contacts/<int:page>', methods=['GET'])
+# def controlGetContacts(page):
+# 	try:
+# 		assertLogin()
+# 		contacts = service.getContacts(current_user, page, **(request.args))
+# 		return jsonify({'success': 1, 'contacts': [i.serialize for i in contacts]})
+# 	except Exception as e:
+# 		print e
+# 		return jsonify({'success': 0, 'error': str(e)})
 
 @app.route('/contacts/all', methods=['GET'])
 def controlGetContactsAll():
 	try:
+		args = request.args
+		limit = int(args.get('limit', 999999))
 		assertLogin()
-		return jsonify({'success': 1, 'contacts': [i.serialize for i in current_user.contacts]})
+		return jsonify({'success': 1, 'contacts': [i.serialize for i in current_user.contacts[:limit]]})
 	except Exception as e:
 		print e
 		return jsonify({'success': 0, 'error': str(e)})
