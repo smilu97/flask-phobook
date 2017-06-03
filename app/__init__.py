@@ -1,8 +1,12 @@
-#-*- coding: utf-8 -*-
-import imp, sys
+# -*- coding: utf-8 -*-
+
+import imp
+import sys
 imp.reload(sys)
-try: sys.setdefaultencoding('UTF8')
-except Exception as e: pass
+try:
+    sys.setdefaultencoding('UTF8')
+except Exception as e:
+    pass
 
 from flask import Flask
 import config
@@ -19,9 +23,10 @@ init_db()
 
 from app.login import *
 
+
 @app.teardown_appcontext
 def shutdown_session(exception):
-	db_session.remove()
+    db_session.remove()
 
 from app.controller import routes
 routes(app)
@@ -31,5 +36,3 @@ socketio = SocketIO(app)
 
 from app.socket import register_socket
 register_socket(socketio)
-
-
