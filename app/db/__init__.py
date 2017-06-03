@@ -11,6 +11,7 @@ Base = declarative_base()
 Base.query = db_session.query_property()
 
 def init_db():
-	import app.db.user
-
-	Base.metadata.create_all(bind=engine)
+    import app.db.user
+    import app.db.message
+    
+    Base.metadata.create_all(bind=engine)

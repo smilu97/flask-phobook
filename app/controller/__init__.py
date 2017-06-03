@@ -1,7 +1,9 @@
 
 def routes(app):
-	from app.controller.base import app as base
-	from app.controller.user import app as user
+	from .base import app as base
+	from .user import app as user
+	from .message import app as message
 
 	app.register_blueprint(base)
 	app.register_blueprint(user)
+	app.register_blueprint(message)

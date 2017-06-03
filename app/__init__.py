@@ -1,7 +1,8 @@
 #-*- coding: utf-8 -*-
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+import imp, sys
+imp.reload(sys)
+try: sys.setdefaultencoding('UTF8')
+except Exception as e: pass
 
 from flask import Flask
 import config
@@ -24,3 +25,11 @@ def shutdown_session(exception):
 
 from app.controller import routes
 routes(app)
+
+from flask_socketio import SocketIO
+socketio = SocketIO(app)
+
+from app.socket import register_socket
+register_socket(socketio)
+
+

@@ -45,11 +45,25 @@ def controllPostContact():
 		assertLogin()
 		json = request.get_json()
 		phoneNumber = json['phoneNumber']
-		other = service.createContact(current_user, phoneNumber)
+		name = json['name']
+		other = service.createContact(current_user, name, phoneNumber)
 		return jsonify({'success':1, 'otherId': other.id})
 	except Exception as e:
 		print e
 		return jsonify({'success':0, 'error': str(e)})
+
+@app.route('/contact/<int:contactId>', methods=['GET'])
+def controlGetContact(contactId):
+	try:
+		assertLogin()
+		contact = service.get(contactId)
+		if not contact: raise u'잘못된 사용자 번호입니다'
+		if contact not in current_user.contacts: raise u'접근이 불가합니다'
+		return jsonify({'success': 1, 'contact': contact.serialize})
+	except Exception as e:
+		print e
+		return jsonify({'success': 0, 'error': str(e)})
+
 
 # @app.route('/contacts/<int:page>', methods=['GET'])
 # def controlGetContacts(page):
