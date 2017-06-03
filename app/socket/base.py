@@ -63,12 +63,14 @@ class BaseSocket(Namespace):
             f = user.id
             t = int(data['contactId'])
             content = str(data['content'])
-            room = str(f) + ':' + str(t)
 
             msg = Message(f, t, content)
             db_session.add(msg)
             db_session.commit()
 
+            if f > t:
+                f, t = t, f
+            room = str(f) + ':' + str(t)
             emit('chat', msg.serialize, room=room)
         except Exception as e:
             print e
