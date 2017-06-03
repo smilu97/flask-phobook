@@ -25,3 +25,11 @@ def shutdown_session(exception):
 
 from app.controller import routes
 routes(app)
+
+from flask_socketio import SocketIO
+socketio = SocketIO(app)
+
+from app.socket import register_socket
+register_socket(socketio)
+
+

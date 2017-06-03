@@ -34,10 +34,10 @@ def signup(data):
 	db_session.commit()
 	return user
 
-def createContact(user, phoneNumber):
+def createContact(user, name, phoneNumber):
 	other = findByPhoneNumber(phoneNumber)
 	if not other:
-		other = User(phoneNumber=phoneNumber)
+		other = User(name=name, phoneNumber=phoneNumber)
 		db_session.add(other)
 	user.contacts.append(other)
 	db_session.commit()
@@ -47,8 +47,6 @@ def removeContact(user, otherId):
 	other = get(otherId)
 	if not other: return False
 	user.contacts.remove(other)
-	if other.password == None:
-		db_session.delete(other)
 	db_session.commit()
 	return True
 
