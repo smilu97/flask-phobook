@@ -5,6 +5,7 @@ from flask_login import current_user
 from app.service import assert_login
 
 import app.service.message as service
+import app.service.user as userService
 
 app = Blueprint('message', __name__)
 
@@ -27,7 +28,11 @@ def controlGetMessages(contactId):
     try:
         assert_login()
         messages = service.find_all(current_user, contactId)
-        return jsonify({'success': 1, 'messages': [i.serialize for i in messages]})
+        other = userService.get(contactId)
+        if not other:
+            raise Exception(u'존재하지 않는 유저입니다')
+        return jsonify({'success': 1, 'messages': [i.serialize for i in messages], \
+            'user': other.serialize})
     except Exception as e:
         print e
         return jsonify({'success': 0, 'error': str(e)})
