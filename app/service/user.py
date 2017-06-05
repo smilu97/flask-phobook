@@ -14,6 +14,10 @@ def findByPhoneNumber(phoneNumber):
     return db_session.query(User).filter(User.phoneNumber == phoneNumber).first()
 
 
+def findByToken(token):
+    return db_session.query(User).filter(User.token == token).first()
+
+
 def login(phoneNumber, password):
     user = findByPhoneNumber(phoneNumber)
     if not user:

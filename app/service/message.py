@@ -11,13 +11,8 @@ def get(id):
     return db_session.query(Message).get(id)
 
 
-def create(user, contactId, content):
-    contact = db_session.query(User).get(contactId)
-    if not contact:
-        raise Exception(u'메시지 전송에 실패했습니다')
-    if contact not in user.contacts:
-        raise Exception(u'메시지 전송에 실패했습니다')
-    message = Message(user.id, contactId, content)
+def create(room, user, content):
+    message = Message(room.id, user.id, content)
     db_session.add(message)
     db_session.commit()
     return message

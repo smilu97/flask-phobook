@@ -15,5 +15,6 @@ Base.query = db_session.query_property()
 def init_db():
     import app.db.user
     import app.db.message
+    import app.db.room
 
     Base.metadata.create_all(bind=engine)

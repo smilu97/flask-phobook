@@ -1,8 +1,11 @@
 from flask_socketio import Namespace, join_room, leave_room, emit
 from flask import session
-from app.db import db_session
-from app.db.user import User
-from app.db.message import Message
+
+from app.socket import *
+
+import app.service.user as userService
+import app.service.room as roomService
+import app.service.message as messageService
 
 class BaseSocket(Namespace):
 
@@ -17,39 +20,30 @@ class BaseSocket(Namespace):
     def on_enter_chat(self, data):
         try:
             print 'enter_chat:',data
+
             token = data['token']
-            contactId = int(data['contactId'])
-            user = db_session.query(User).filter(User.token == token).first()
-            if not user:
+            current_user = userService.findByToken(token)
+            if not current_user:
                 raise Exception('enter_chat: User not found')
-            other = db_session.query(User).get(contactId)
-            if not other:
-                raise Exception('enter_chat: Other not found')
-            a, b = user.id, other.id
-            if a > b:
-                b, a = a, b
-            room = str(a) + ':' + str(b)
-            join_room(room)
+
+            roomId = int(data['roomId'])
+            room = roomService.get(roomId)
+            if not room:
+                raise Exception('enter_chat: Room not found')
+            if current_user not in room.users:
+                raise Exception('enter_chat: Unauthorized entering room')
+
+            print 'joined room: {}'.format(roomId)
+            join_room(roomId)
+
         except Exception as e:
             print e
-
 
     def on_leave_chat(self, data):
         try:
             print 'leave_chat:',data
-            token = data['token']
-            contactId = int(data['contactId'])
-            user = db_session.query(User).filter(User.token == token).first()
-            if not user:
-                raise Exception('enter_chat: User not found')
-            other = db_session.query(User).get(contactId)
-            if not other:
-                raise Exception('enter_chat: Other not found')
-            a, b = user.id, other.id
-            if a > b:
-                b, a = a, b
-            room = str(a) + ':' + str(b)
-            leave_room(room)
+            roomId = data['roomId']
+            leave_room(roomId)
         except Exception as e:
             print e
 
@@ -57,20 +51,19 @@ class BaseSocket(Namespace):
         try:
             print 'chat:',data
             token = data['token']
-            user = db_session.query(User).filter(User.token == token).first()
-            if not user:
+            current_user = userService.findByToken(token)
+            if not current_user:
                 raise Exception('chat: invalid token')
-            f = user.id
-            t = int(data['contactId'])
-            content = str(data['content'])
 
-            msg = Message(f, t, content)
-            db_session.add(msg)
-            db_session.commit()
+            room_id = data['roomId']
+            room = roomService.get(room_id)
+            if not room:
+                raise Exception('chat: Room not found')
 
-            if f > t:
-                f, t = t, f
-            room = str(f) + ':' + str(t)
-            emit('chat', msg.serialize, room=room)
+            content = data['content']
+
+            msg = messageService.create(room, current_user, content)
+
+            emit('chat', msg.serialize, room=room.id)
         except Exception as e:
             print e
