@@ -14,7 +14,7 @@ JSONIFY_PRETTYPRINT_REGULAR = default.JSONIFY_PRETTYPRINT_REGULAR
 
 DATABASE_USERNAME = 'phobook'
 DATABASE_PASSWORD = 'smilu9791!#$%'
-DATABASE_URL = 'localhost'
+DATABASE_URL = 'smilu.link'
 DATABASE_SCHEME_NAME = 'phobook'
 
 DATABASE_CONNECT_URL = 'mysql+pymysql://{}:{}@{}/{}?charset=utf8'.format(\

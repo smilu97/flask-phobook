@@ -1,3 +1,5 @@
+# -*- coding: utf8 -*-
+
 from flask_socketio import Namespace, join_room, leave_room, emit
 from flask import session
 

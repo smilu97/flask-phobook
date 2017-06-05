@@ -81,7 +81,7 @@ def controlGetContact(contactId):
         contact = service.get(contactId)
         if not contact:
             raise u'잘못된 사용자 번호입니다'
-        if contact not in current_user.contacts:
+        if contact not in current_user.contacts and current_user.id != contactId:
             raise u'접근이 불가합니다'
         return jsonify({'success': 1, 'contact': contact.serialize})
     except Exception as e:
