@@ -36,6 +36,8 @@ def controlGetRoom(roomId):
 		if current_user not in room.users:
 			raise Exception(u'Not authorized')
 
+		service.userCheckRoom(current_user, room)
+
 		return jsonify({'success': 1, 'room': room.serialize, 'messages': [i.serialize for i in room.messages]})
 	except Exception as e:
 		print e
@@ -65,10 +67,13 @@ def controlPostRoom():
 		return jsonify({'success': 0, 'error': str(e)})
 
 
-@app.route('/room/<int:roomId>/invite/<int:contactId>', methods=['POST'])
-def controlPostRoomInvite(roomId, contactId):
+@app.route('/room/<int:roomId>/invite', methods=['POST'])
+def controlPostRoomInvite(roomId):
 	try:
 		assert_login();
+
+		json = request.get_json();
+		userIds = json['users']
 
 		room = service.get(roomId)
 		if not room:
@@ -77,12 +82,41 @@ def controlPostRoomInvite(roomId, contactId):
 		if current_user not in room.users:
 			raise Exception(u'Not authorized')
 
-		contact_user = userService.get(contactId)
-		if not contact_user:
-			raise Exception(u'User not found')
+		users = []
+		for userId in userIds:
+			user = userService.get(userId)
+			if user and (user in current_user.contacts):
+				users.append(user)
 
-		service.invite(room, contact_user)
+		service.inviteMany(room, users)
 		return jsonify({'success': 1})
+	except Exception as e:
+		print e
+		return jsonify({'success': 0, 'error': str(e)})
+
+
+@app.route('/room/<int:roomId>/exit', methods=['POST'])
+def controlPostExitRoom(roomId):
+	try:
+		assert_login();
+
+		room = service.get(roomId)
+		if not room:
+			raise Exception(u'Room not found')
+
+		service.exitRoom(current_user, room)
+		return jsonify({'success': 1})
+	except Exception as e:
+		print e
+		return jsonify({'success': 0, 'error': str(e)})
+
+
+@app.route('/room/all', methods=['GET'])
+def controlGetAllRoom():
+	try:
+		assert_login()
+		rooms = service.getAllRoomsWithCheck(current_user)
+		return jsonify({'success': 1, 'rooms': rooms})
 	except Exception as e:
 		print e
 		return jsonify({'success': 0, 'error': str(e)})

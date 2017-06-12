@@ -78,3 +78,11 @@ def getContacts(user, page, pageSize=20, **kwargs):
         .limit(pageSize) \
         .all()
     return others
+
+def connect(user):
+    user.connecting = 1
+    db_session.commit() 
+
+def disconnect(user):
+    user.connecting = 0
+    db_session.commit()

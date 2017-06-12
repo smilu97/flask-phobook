@@ -21,6 +21,7 @@ class User(Base):
     password = Column(String(256))
     role = Column(String(32))
     token = Column(String(64))
+    connecting = Column(Integer, default=0)
 
     contacts = relationship(
         'User',
@@ -29,6 +30,8 @@ class User(Base):
         secondaryjoin=(id == user_know.c.other_id),
         backref="reverse_contacts"
     )
+
+    rooms = relationship('Room', secondary='user_in_room')
 
     def updateToken(self):
         token = ''

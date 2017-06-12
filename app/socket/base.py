@@ -19,39 +19,22 @@ class BaseSocket(Namespace):
         print 'disconnect'
         session.clear()
 
-    def on_enter_chat(self, data):
-        try:
-            print 'enter_chat:',data
+    def on_user_join(self, data):
+        token = data['token']
+        current_user = userService.findByToken(token)
+        if current_user:
+            userService.connect(current_user)
+            join_room('user:{}'.format(current_user.id))
 
-            token = data['token']
-            current_user = userService.findByToken(token)
-            if not current_user:
-                raise Exception('enter_chat: User not found')
-
-            roomId = int(data['roomId'])
-            room = roomService.get(roomId)
-            if not room:
-                raise Exception('enter_chat: Room not found')
-            if current_user not in room.users:
-                raise Exception('enter_chat: Unauthorized entering room')
-
-            print 'joined room: {}'.format(roomId)
-            join_room(roomId)
-
-        except Exception as e:
-            print e
-
-    def on_leave_chat(self, data):
-        try:
-            print 'leave_chat:',data
-            roomId = data['roomId']
-            leave_room(roomId)
-        except Exception as e:
-            print e
+    def on_user_out(self, data):
+        token = data['token']
+        current_user = userService.findByToken(token)
+        if current_user:
+            userService.disconnect(current_user)
+            leave_room('user:{}'.format(current_user.id))
 
     def on_chat(self, data):
         try:
-            print 'chat:',data
             token = data['token']
             current_user = userService.findByToken(token)
             if not current_user:
@@ -64,8 +47,12 @@ class BaseSocket(Namespace):
 
             content = data['content']
 
-            msg = messageService.create(room, current_user, content)
+            print 'chat: {} said {}'.format(current_user.name, content)
 
-            emit('chat', msg.serialize, room=room.id)
+            msg = messageService.create(room, current_user, content).serialize
+
+            users = roomService.findConnectingUsersInRoom(room)
+            for user in users:
+                emit('chat', msg, room='user:{}'.format(user.id))
         except Exception as e:
             print e

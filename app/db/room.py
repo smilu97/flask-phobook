@@ -2,14 +2,13 @@ from app.db import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, Table
 from sqlalchemy.orm import relationship
 
-user_in_room = Table('user_in_room', Base.metadata,
-	Column('room_id', Integer, ForeignKey(
-	  'room.id', ondelete='CASCADE')),
-	Column('user_id', Integer, ForeignKey(
-	  'user.id', ondelete='CASCADE'))	
-)
-
 from datetime import datetime
+
+user_in_room = Table('user_in_room', Base.metadata,
+	Column('room_id', Integer, ForeignKey('room.id', ondelete='CASCADE')),
+	Column('user_id', Integer, ForeignKey('user.id', ondelete='CASCADE')),
+	Column('last_check', DateTime)
+)
 
 
 class Room(Base):
@@ -24,6 +23,7 @@ class Room(Base):
 	users = relationship('User', secondary=user_in_room)
 	host  = relationship('User')
 	messages = relationship('Message', back_populates="room")
+	oto = relationship('OneToOneRoom')
 
 	def __init__(self, name, hostId):
 		self.name = name
