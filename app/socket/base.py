@@ -25,6 +25,10 @@ class BaseSocket(Namespace):
         if current_user:
             userService.connect(current_user)
             join_room('user:{}'.format(current_user.id))
+            online_friends = userService.findOnlineContact(current_user)
+            for user in online_friends:
+                emit('friend_in', current_user.id, room='user:{}'.format(user.id))
+
 
     def on_user_out(self, data):
         token = data['token']
@@ -32,6 +36,9 @@ class BaseSocket(Namespace):
         if current_user:
             userService.disconnect(current_user)
             leave_room('user:{}'.format(current_user.id))
+            online_friends = userService.findOnlineContact(current_user)
+            for user in online_friends:
+                emit('friend_out', current_user.id, room='user:{}'.format(user.id))
 
     def on_chat(self, data):
         try:

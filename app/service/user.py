@@ -18,6 +18,12 @@ def findByToken(token):
     return db_session.query(User).filter(User.token == token).first()
 
 
+def findOnlineContact(user):
+    result = db_session.query(user_know, User).filter(user_know.c.user_id == user.id)\
+            .join(User, user_know.c.other_id == User.id).filter(User.connecting == 1).all()
+    return [i.User for i in result]
+
+
 def login(phoneNumber, password):
     user = findByPhoneNumber(phoneNumber)
     if not user:
