@@ -43,7 +43,7 @@ uwsgi wsgi.ini
 
 ### UWSGI Setting
 
-[uwsgi.ini](./uwsgi.ini) 를 참고하세요. uwsgi는 플라스크 어플리케이션과 nginx, tomcat과 같은 서버가 통신할 수 있도록 연결해줍니다.
+[wsgi.ini](./wsgi.ini) 를 참고하세요. uwsgi는 플라스크 어플리케이션과 nginx, tomcat과 같은 서버가 통신할 수 있도록 연결해줍니다.
 
 ## Configurations
 
