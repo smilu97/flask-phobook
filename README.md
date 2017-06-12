@@ -23,12 +23,20 @@ Author:
 
 ## How to setup
 
-Virtualenv 가 설치되어 있어야 합니다. virtualenv설치에 대해서는 이 사이트를 참고하세요 [Go](https://virtualenv.pypa.io/en/stable/)
+Virtualenv 가 설치를 권장합니다. virtualenv설치에 대해서는 이 사이트를 참고하세요 [Go](https://virtualenv.pypa.io/en/stable/)
 
 ```sh
 git clone https://github.com/smilu97/oop_term_flask
 virtualenv venv
 source venv/bin/activate
+pip install -r requirements.txt
+uwsgi wsgi.ini
+```
+
+Virtualenv가 설치되있지 않은 경우 위에서 2, 3번째 줄을 생략하여 아래와 같이 실행합니다
+
+```sh
+git clone https://github.com/smilu97/oop_term_flask
 pip install -r requirements.txt
 uwsgi wsgi.ini
 ```
