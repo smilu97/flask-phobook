@@ -1,10 +1,12 @@
 # -*- coding: utf8 -*-
 
-import hashlib
+import hashlib, os
 from app.db.user import User, user_know
 from app.db import db_session
 from app.service import hash_password
+from app import pydent
 
+PROFILE_IMAGE_PATH = './static/profile/images/'
 
 def get(id):
     return db_session.query(User).get(id)
@@ -47,6 +49,7 @@ def signup(data):
         raise Exception(u'비밀번호가 너무 짧습니다')
     if not user:
         user = User(**data)
+        createIdenticon(user)
         db_session.add(user)
     elif user.password is None:
         data['password'] = hash_password(data['password'])
@@ -92,3 +95,13 @@ def connect(user):
 def disconnect(user):
     user.connecting = 0
     db_session.commit()
+
+def createIdenticon(user):
+    img = pydent.generate(str(user.id), 50, 50)
+
+    fp = open('{}{}.png'.format(PROFILE_IMAGE_PATH, user.id), 'wb')
+    fp.write(img)
+    fp.close()
+
+def deleteIdenticon(user):
+    os.remove('{}{}.png'.format(PROFILE_IMAGE_PATH, user.id))

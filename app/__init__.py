@@ -18,6 +18,10 @@ app.config.from_object('config')
 from flask_cors import CORS, cross_origin
 cors = CORS(app, resources={r"/*":{"origins":"*"}})
 
+# Identicon generator
+from pydenticon import Generator
+pydent = Generator(8, 8)
+
 from app.db import init_db, db_session
 init_db()
 
